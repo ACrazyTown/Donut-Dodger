@@ -46,6 +46,8 @@ sExplode = pygame.mixer.Sound("data/explode.ogg")
 
 #GameOver
 font = pygame.font.SysFont(("Futura", "Arial Black", "Arial", "Courier New"), 20)
+bigFont = pygame.font.SysFont(("Futura", "Arial Black", "Arial", "Courier New"), 40)
+
 class Donut:
     def __init__(self, x, y, vel):
         self.x = x
@@ -58,13 +60,18 @@ class Donut:
         global donuts
         global dodgedDonuts
         global donutVelMult
+        global pooled
         global explosionTime
 
         if len(donuts) == 0: return
         for i in donuts:
             if i.y > 490:
-                donuts.remove(i)
+               # donuts.remove(i)
+                if not pooled: pooled = True
                 dodgedDonuts += 1
+                rand = random.randint(0, res[0])
+                i.y = -50
+                i.x = rand
                 continue
             
             colliding = playerCollision(i)
@@ -154,8 +161,14 @@ while run:
     texts2 = f"[<] {diffs[diff % len(diffs)]} [>]"
     textss = ["Easy", "Medium", "Hard"]
     poopyLength = len(texts)
+
+    #FPS
+    fps_choice = 2
+    fps_choices = [15, 30, 60, 120, 144, 165, 240, 999]
+    fps_cap = 60
+    fps_length = len(fps_choices)
     while menu:
-        clock.tick(60)
+        clock.tick(fps_cap)
         deltaTime()
         screen.fill((255, 255, 255))
         for event in pygame.event.get():
@@ -167,6 +180,10 @@ while run:
                     main = True
                     sHit.play()
                     menu = False
+                if event.key == pygame.K_f:
+                    fps_choice += 1
+                    fps_cap = fps_choices[fps_choice % fps_length]
+                    print(f"FPS IS NOW {fps_cap}")
                 if event.key == pygame.K_LEFT:
                     if diff > 0:
                         diff -= 1
@@ -189,7 +206,7 @@ while run:
         text = texts[poopIndex % poopyLength]
         bruh = font.render(text, True, (0, 0, 0))
         bruh2 = font.render(texts2, True, (0, 0, 0))
-        title = font.render("DONUT DODGER.py (dank Meme editieon)", True, (0, 0, 0))
+        title = bigFont.render("DONUT DODGER PY (dank Meme editieon)", True, (0, 0, 0))
         screen.blit(title, (res[0] / 2 - title.get_width() / 2, 40))
         screen.blit(bruh, (res[0] / 2 - bruh.get_width() / 2, 200 - 2 *math.fabs(math.sin(time.time() / 0.352945328) * 10)))
         screen.blit(bruh2, (res[0] / 2 - bruh2.get_width() / 2, 250 - 2 *math.fabs(math.sin(time.time() / 0.352945328) * 10)))
@@ -203,7 +220,7 @@ while run:
     player.reset()
 
     while main:
-        clock.tick(60)
+        clock.tick(fps_cap)
         deltaTime()
         screen.fill((255, 255, 255))
         if debugMode:
@@ -213,9 +230,13 @@ while run:
                 run = False
                 main = False
         keys = pygame.key.get_pressed()
-        if time.time() >= donutDelay_:
-            donutDelay_ = time.time() + donutDelay
-            Donut.spawn()
+        #if time.time() >= donutDelay_:
+        #    donutDelay_ = time.time() + donutDelay
+        #    Donut.spawn()
+        if not pooled:
+            if time.time() >= donutDelay_:
+                donutDelay_ = time.time() + donutDelay
+                Donut.spawn()
 
         if player.vel != 0:
             if player.vel > 0:
@@ -230,6 +251,7 @@ while run:
 
         player.vel = clamp(player.vel, -playerVel, playerVel)
         player.x += player.vel * dt
+        print(dt)
 
         if player.x > res[0] - 50:
             player.x = res[0] - 50
@@ -257,7 +279,7 @@ while run:
     while explosionTime:
         main = False
 
-        clock.tick(60)
+        clock.tick(fps_cap)
 
         screen.fill((255, 255, 255))
         #screen.fill((255, 255, 255))
@@ -289,7 +311,7 @@ while run:
         pygame.display.flip()
         
     while over:
-        clock.tick(60)
+        clock.tick(fps_cap)
 
         screen.fill((0, 0, 0))
         for event in pygame.event.get():

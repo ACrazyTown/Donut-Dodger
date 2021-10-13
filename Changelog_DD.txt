@@ -20,3 +20,7 @@ MM/DD/YYYY
 0.2.1: - 21:44 Armenia Time on 10/12/2021
 - Displays difficulty on end screen.
 - Still working on that flicker fix :( but it's mostly fixed ig
+
+0.2.2: - 15:37 Armenia Time on 10/13/2021
+- FIXED donut rendering issues entirely!! This was done by creating a simple instance pooling system for the donuts.
+- BUG WITH DELTATIME: Seems to affect speed increase/decrease weirdly - low FPS = fast, high FPS = slow
