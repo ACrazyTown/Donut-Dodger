@@ -157,6 +157,9 @@ donutDelay_ = 0.33
 
 diff = 1
 diffs = ["Easy", "Normal", "Hard"]
+
+coolX = 0
+
 while run:
     poopy = time.time() + 1.5 / 0.352945328
     poopIndex = 0
@@ -167,7 +170,7 @@ while run:
 
     #FPS
     fps_choice = 2
-    fps_choices = [15, 30, 60, 120, 144, 165, 240, 999]
+    fps_choices = [15, 30, 60, 75, 120, 144, 165, 240, 360, 999]
     fps_cap = 60
     fps_length = len(fps_choices)
     while menu:
@@ -201,7 +204,7 @@ while run:
                         sSelect.play()
                     else:
                         sHit.play()
-            
+
         if time.time() >= poopy:
             poopy = time.time() + 1.5 / 0.352945328
             poopIndex += 1
@@ -210,9 +213,18 @@ while run:
         bruh = font.render(text, True, (0, 0, 0))
         bruh2 = font.render(texts2, True, (0, 0, 0))
         title = bigFont.render("DONUT DODGER PY", True, (0, 0, 0))
+        sussy = font.render("debug mode!!! hacker", True, (0, 0, 0))
         screen.blit(title, (res[0] / 2 - title.get_width() / 2, 40))
         screen.blit(bruh, (res[0] / 2 - bruh.get_width() / 2, 200 - 2 *math.fabs(math.sin(time.time() / 0.352945328) * 10)))
         screen.blit(bruh2, (res[0] / 2 - bruh2.get_width() / 2, 250 - 2 *math.fabs(math.sin(time.time() / 0.352945328) * 10)))
+
+        coolX += 2
+        if coolX > res[0]:
+            coolX = -sussy.get_width()
+
+        if debugMode:
+            # res[0] / 2 - sussy.get_width() / 2
+            screen.blit(sussy, (coolX, res[1] - 75))
         pygame.display.flip()
 
     donutVelMult = (diff % len(diffs) + 1) * 0.75
@@ -284,7 +296,7 @@ while run:
     daExploder = Explosion(player.x - 65, player.y - 150)
     coolFrame = 0
 
-    if (explosionTime):
+    if explosionTime:
         global finalDodge
         finalDodge = dodgedDonuts      
 
@@ -310,14 +322,14 @@ while run:
             print("hi")
             coolFrame += 1
 
-        if (coolFrame == 1):
+        if coolFrame == 1:
             sExplode.play()
 
         #Donut.update()
         for i in donuts:
             screen.blit(iDonut, (i.x, i.y))
 
-        if (coolFrame < 12):
+        if coolFrame < 12:
             screen.blit(iDing, (player.x, player.y))
         screen.blit(daExploder.explosionAnimation[coolFrame//3], (player.x - 65, player.y - 150))
         pygame.display.flip()
