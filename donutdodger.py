@@ -2,11 +2,25 @@ import pygame
 import time
 import random
 import math
+import argparse
 
+from pygame.display import update
+
+# PRE INIT STUFF
+debugMode = False
+
+parser = argparse.ArgumentParser(description='Donut Dodger (Real) (not fake)')
+parser.add_argument('--debug', action='store_true', help="Debug Mode (awesome)", required=False)
+
+args = parser.parse_args()
+debugMode = args.debug
+print(f"DEBUG MODE???: {args.debug}")
+
+# GAME STUFf
 pygame.init()
 res = (500, 500)
 screen = pygame.display.set_mode(res)
-pygame.display.set_caption("you're mom")
+pygame.display.set_caption("DONUT DOGER PYTHON (SWAG WEED EDITION)")
 run = True
 clock = pygame.time.Clock()
 donutSize = 35
@@ -63,6 +77,7 @@ class Donut:
         rand = random.randint(0, res[0])
         newDonut = Donut(rand, -50, 250)
         donuts.append(newDonut)
+
 class Player:
     def __init__(self, x, y, vel):
         self.x = x
@@ -76,8 +91,14 @@ class Player:
 player = Player(250, 450, 0)
 
 ##EXTRA STUFF############################
+def updateFps():
+    fps = str(int(clock.get_fps()))
+    fps_text = font.render(fps, 1, pygame.Color("coral"))
+    return fps_text
+
 def clamp(n, minn, maxn):
     return max(min(maxn, n), minn)
+
 dt = 0
 prevTime = time.time()
 def deltaTime():
@@ -86,8 +107,6 @@ def deltaTime():
     now = time.time()
     dt = now - prevTime
     prevTime = now
-
-
 
 def playerCollision(donut):
     global player
@@ -174,6 +193,8 @@ while run:
         clock.tick(60)
         deltaTime()
         screen.fill((255, 255, 255))
+        if debugMode:
+            screen.blit(updateFps(), (10, 0)) 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
