@@ -117,7 +117,7 @@ player = Player(250, 450, 0)
 ##EXTRA STUFF############################
 def updateFps():
     fps = str(int(clock.get_fps()))
-    fps_text = font.render(fps, 1, pygame.Color("coral"))
+    fps_text = font.render(fps, 1, pygame.Color(237, 114, 161))
     return fps_text
 
 def clamp(n, minn, maxn):
