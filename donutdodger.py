@@ -28,6 +28,8 @@ clock = pygame.time.Clock()
 donutSize = 35
 playerSize = 50
 
+showFps = False
+
 iDonut = pygame.image.load("data/donut.png").convert_alpha()
 iDonut = pygame.transform.scale(iDonut, (donutSize, donutSize))
 
@@ -60,13 +62,14 @@ class Donut:
         global donuts
         global dodgedDonuts
         global donutVelMult
+
         global pooled
         global explosionTime
 
         if len(donuts) == 0: return
         for i in donuts:
             if i.y > 490:
-               # donuts.remove(i)
+                # donuts.remove(i)
                 if not pooled: pooled = True
                 dodgedDonuts += 1
                 rand = random.randint(0, res[0])
@@ -206,7 +209,7 @@ while run:
         text = texts[poopIndex % poopyLength]
         bruh = font.render(text, True, (0, 0, 0))
         bruh2 = font.render(texts2, True, (0, 0, 0))
-        title = bigFont.render("DONUT DODGER PY (dank Meme editieon)", True, (0, 0, 0))
+        title = bigFont.render("DONUT DODGER PY", True, (0, 0, 0))
         screen.blit(title, (res[0] / 2 - title.get_width() / 2, 40))
         screen.blit(bruh, (res[0] / 2 - bruh.get_width() / 2, 200 - 2 *math.fabs(math.sin(time.time() / 0.352945328) * 10)))
         screen.blit(bruh2, (res[0] / 2 - bruh2.get_width() / 2, 250 - 2 *math.fabs(math.sin(time.time() / 0.352945328) * 10)))
@@ -218,21 +221,30 @@ while run:
     donutDelay_ = time.time() + donutDelay
     donuts = []
     player.reset()
+    
+    # POOLING
+    pooled = False
 
     while main:
         clock.tick(fps_cap)
         deltaTime()
         screen.fill((255, 255, 255))
-        if debugMode:
+        if debugMode or showFps:
             screen.blit(updateFps(), (10, 0)) 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
                 main = False
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_t:
+                    showFps = not showFps
+                    print(showFps)
+
         keys = pygame.key.get_pressed()
         #if time.time() >= donutDelay_:
         #    donutDelay_ = time.time() + donutDelay
         #    Donut.spawn()
+
         if not pooled:
             if time.time() >= donutDelay_:
                 donutDelay_ = time.time() + donutDelay
