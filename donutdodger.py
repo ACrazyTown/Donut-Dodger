@@ -1,8 +1,10 @@
+from os import curdir
 import pygame
 import time
 import random
 import math
 import argparse
+from pygame import image
 
 from pygame.display import update
 
@@ -40,6 +42,7 @@ playerVel = 2000
 sHit = pygame.mixer.Sound("data/hit.ogg")
 sSelect = pygame.mixer.Sound("data/select.ogg")
 sMusic = pygame.mixer.Sound("data/deez.ogg")
+sExplode = pygame.mixer.Sound("data/explode.ogg")
 
 #GameOver
 font = pygame.font.SysFont(("Futura", "Arial Black", "Arial", "Courier New"), 20)
@@ -55,6 +58,7 @@ class Donut:
         global donuts
         global dodgedDonuts
         global donutVelMult
+        global explosionTime
 
         if len(donuts) == 0: return
         for i in donuts:
@@ -66,18 +70,28 @@ class Donut:
             colliding = playerCollision(i)
             if colliding:
                 print("COLLISION!!!!")
-                over = True
+                #over = True
+                explosionTime = True
                 sHit.play()
                 main = False
             i.y += i.vel * donutVelMult * dt
-            
-                
                 
     def spawn():
         rand = random.randint(0, res[0])
         newDonut = Donut(rand, -50, 250)
         donuts.append(newDonut)
 
+class Explosion:
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
+
+        self.explosionAnimation = []
+        # cool dynamic frame loader
+        for i in range(0, 17):
+            self.explosionAnimation.append(image.load(f"data/explosion/{i}.png"))
+        print(self.explosionAnimation)
+        
 class Player:
     def __init__(self, x, y, vel):
         self.x = x
@@ -116,7 +130,6 @@ def playerCollision(donut):
 
 
 #print(donuts)
-
 main = False
 over = False
 menu = True
@@ -176,7 +189,7 @@ while run:
         text = texts[poopIndex % poopyLength]
         bruh = font.render(text, True, (0, 0, 0))
         bruh2 = font.render(texts2, True, (0, 0, 0))
-        title = font.render("DONUT DODGER (real version)", True, (0, 0, 0))
+        title = font.render("DONUT DODGER.py (dank Meme editieon)", True, (0, 0, 0))
         screen.blit(title, (res[0] / 2 - title.get_width() / 2, 40))
         screen.blit(bruh, (res[0] / 2 - bruh.get_width() / 2, 200 - 2 *math.fabs(math.sin(time.time() / 0.352945328) * 10)))
         screen.blit(bruh2, (res[0] / 2 - bruh2.get_width() / 2, 250 - 2 *math.fabs(math.sin(time.time() / 0.352945328) * 10)))
@@ -188,7 +201,7 @@ while run:
     donutDelay_ = time.time() + donutDelay
     donuts = []
     player.reset()
-    
+
     while main:
         clock.tick(60)
         deltaTime()
@@ -225,7 +238,6 @@ while run:
             player.x = 0
             player.vel = 0
 
-        
         #pygame.draw.rect(screen, (255, 0, 0), pygame.Rect(player.x, player.y, 25, 25))
         Donut.update()
         screen.blit(iDing, (player.x, player.y))
@@ -235,8 +247,50 @@ while run:
     
     ###################################GAME OVER#########################################
 
+    daExploder = Explosion(player.x - 65, player.y - 150)
+    coolFrame = 0
+
+    if (explosionTime):
+        global finalDodge
+        finalDodge = dodgedDonuts      
+
+    while explosionTime:
+        main = False
+
+        clock.tick(60)
+
+        screen.fill((255, 255, 255))
+        #screen.fill((255, 255, 255))
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                run = False
+                over = False
+
+        if debugMode:
+            screen.blit(updateFps(), (10, 0)) 
+
+        if coolFrame > 45:
+            explosionTime = False
+            over = True
+        else:
+            print("hi")
+            coolFrame += 1
+
+        if (coolFrame == 1):
+            sExplode.play()
+
+        #Donut.update()
+        for i in donuts:
+            screen.blit(iDonut, (i.x, i.y))
+
+        if (coolFrame < 12):
+            screen.blit(iDing, (player.x, player.y))
+        screen.blit(daExploder.explosionAnimation[coolFrame//3], (player.x - 65, player.y - 150))
+        pygame.display.flip()
+        
     while over:
         clock.tick(60)
+
         screen.fill((0, 0, 0))
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -246,7 +300,7 @@ while run:
                 menu = True
                 sHit.play()
                 over = False
-        text = f"u doged {dodgedDonuts} donut s on {diffs[diff]} mod e."
+        text = f"u doged {finalDodge} donut s on {diffs[diff]} mod e."
         bruh = font.render(text, True, (255, 255, 255))
         screen.blit(bruh, (0 + 25, 200))
         pygame.display.flip()
