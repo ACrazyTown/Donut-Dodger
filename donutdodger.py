@@ -97,7 +97,7 @@ sExplode = pygame.mixer.Sound("data/explode.ogg")
 #GameOver
 smallFont = pygame.font.SysFont(("Futura", "Arial Black", "Arial", "Courier New"), 10)
 font = pygame.font.SysFont(("Futura", "Arial Black", "Arial", "Courier New"), 20)
-bigFont = pygame.font.SysFont(("Futura", "Arial Black", "Arial", "Courier New"), 40)
+bigFont = pygame.font.SysFont(("Futura", "Arial Black", "Arial", "Courier New"), 32)
 
 class Donut:
     def __init__(self, x, y, vel):
@@ -469,11 +469,9 @@ while run:
         if dodgedDonuts >= int(prevHighScore):
             text = f"u got {dodgedDonuts}! new record f or {diffs[diff]}!!"
             hiScores[diff] = dodgedDonuts
-            file = open("data/hi.txt", "w")
-            file.close()
-            with open("data/hi.txt", "w") as f:
-                f.write(f"e:{hiScores[0]}\nn:{hiScores[1]}\nh:{hiScores[2]}")
 
+            with open("data/hi.txt", "w") as f:
+                f.write(f"e:{hiScores[0]}\nn:{hiScores[1]}\nh:{hiScores[2]}\nw:{hiScores[3]}")
         else:
             text = f"u doged {dodgedDonuts} donut s on {diffs[diff]} mod e."
         bruh = font.render(text, True, (255, 255, 255))

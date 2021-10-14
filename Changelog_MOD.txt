@@ -1,3 +1,10 @@
 1.1 - 5:55PM CEST 14/10/2021
+-- Additions
 - Ported to 0.3
+-- Improvements
 - Improvements to file writing/reading system
+
+1.1.1 - 5:57PM CEST 14/10/2021
+-- Bugfixes
+- Fixed highscore not saving for WTF difficulty
+- Fixed title text going offscreen
