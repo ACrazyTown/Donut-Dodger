@@ -4,7 +4,6 @@ import time
 import random
 import math
 import argparse
-import win32api
 from platform import system
 from pygame import image
 
@@ -23,6 +22,8 @@ print(f"DEBUG MODE???: {args.debug}")
 displayRefreshRate = 60
 
 if system() == "Windows":
+    import win32api
+
     print("Windows system detected, getting refresh rate")
     settings = win32api.EnumDisplaySettings(win32api.EnumDisplayDevices().DeviceName, -1)
     displayRefreshRate = getattr(settings, "DisplayFrequency")
