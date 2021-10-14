@@ -4,6 +4,8 @@ import time
 import random
 import math
 import argparse
+import win32api
+from platform import system
 from pygame import image
 
 from pygame.display import update
@@ -17,6 +19,15 @@ parser.add_argument('--debug', action='store_true', help="Debug Mode (awesome)",
 args = parser.parse_args()
 debugMode = args.debug
 print(f"DEBUG MODE???: {args.debug}")
+
+displayRefreshRate = 60
+
+if system() == "Windows":
+    print("Windows system detected, getting refresh rate")
+    settings = win32api.EnumDisplaySettings(win32api.EnumDisplayDevices().DeviceName, -1)
+    displayRefreshRate = getattr(settings, "DisplayFrequency")
+
+print(displayRefreshRate)
 
 # GAME STUFf
 pygame.init()
@@ -144,6 +155,8 @@ main = False
 over = False
 menu = True
 
+debug = False
+
 pygame.mixer.music.load("data/deez.ogg")
 pygame.mixer.music.set_volume(0.5)
 pygame.mixer.music.play(-1)
@@ -156,23 +169,29 @@ donutDelay = 0.33
 donutDelay_ = 0.33
 
 diff = 1
-diffs = ["Easy", "Normal", "Hard"]
+diffs = ["Easy", "Normal", "Hard", "WTF"]
 
 coolX = 0
 
 while run:
     poopy = time.time() + 1.5 / 0.352945328
     poopIndex = 0
-    texts = [f"Press [Space]", "Live, laugh, eat donuts", "Long live the donut", "Did I mention donuts?"]
+    texts = [f"Press [Space]", "Live, laugh, eat donuts", "Long live the donut", "Did I mention donuts?", "Try WTF mode.... or u suck"]
     texts2 = f"[<] {diffs[diff % len(diffs)]} [>]"
-    textss = ["Easy", "Medium", "Hard"]
+    textss = ["Easy", "Medium", "Hard", "WTF!!"]
     poopyLength = len(texts)
 
     #FPS
-    fps_choice = 2
     fps_choices = [15, 30, 60, 75, 120, 144, 165, 240, 360, 999]
-    fps_cap = 60
+    fps_cap = displayRefreshRate
     fps_length = len(fps_choices)
+    if fps_cap in fps_choices:
+        fps_choice = fps_choices.index(fps_cap)
+    else:
+        fps_choice = 2
+
+    print(fps_cap)
+
     while menu:
         clock.tick(fps_cap)
         deltaTime()
@@ -198,12 +217,15 @@ while run:
                     else:
                         sHit.play()
                 if event.key == pygame.K_RIGHT:
-                    if diff < 2:
+                    if diff < (len(diffs) - 1):
                         diff += 1
                         texts2 =  f"[<] {diffs[diff % len(diffs)]} [>]"
                         sSelect.play()
                     else:
                         sHit.play()
+                if event.key == pygame.K_d and debugMode:
+                    debug = True
+                    menu = False
 
         if time.time() >= poopy:
             poopy = time.time() + 1.5 / 0.352945328
@@ -213,7 +235,7 @@ while run:
         bruh = font.render(text, True, (0, 0, 0))
         bruh2 = font.render(texts2, True, (0, 0, 0))
         title = bigFont.render("DONUT DODGER PY", True, (0, 0, 0))
-        sussy = font.render("debug mode!!! hacker", True, (0, 0, 0))
+        sussy = font.render("debug mode!!! hecker!!!!", True, (0, 0, 0))
         screen.blit(title, (res[0] / 2 - title.get_width() / 2, 40))
         screen.blit(bruh, (res[0] / 2 - bruh.get_width() / 2, 200 - 2 *math.fabs(math.sin(time.time() / 0.352945328) * 10)))
         screen.blit(bruh2, (res[0] / 2 - bruh2.get_width() / 2, 250 - 2 *math.fabs(math.sin(time.time() / 0.352945328) * 10)))
@@ -227,9 +249,35 @@ while run:
             screen.blit(sussy, (coolX, res[1] - 75))
         pygame.display.flip()
 
-    donutVelMult = (diff % len(diffs) + 1) * 0.75
+    # DEBUG MODE OPTIONS
+    slipperyDingToggle = False
+
+    option1Text = "SLIPPERY DING [0] " + str(slipperyDingToggle)
+
+    while debug:
+        clock.tick(fps_cap)
+        screen.fill((255, 255, 255))
+        
+        for event in pygame.event.get():
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE or event.key == pygame.K_SPACE:
+                    menu = True
+                    debug = False
+                if event.key == pygame.K_0:
+                    slipperyDingToggle = not slipperyDingToggle
+                    option1Text = "SLIPPERY DING [0] " + str(slipperyDingToggle)
+
+        cool = font.render("DEBUG MODD (REAL)", True, (0, 0, 0))
+        option1 = font.render(option1Text, True, (0, 0, 0))
+
+        screen.blit(cool, (res[0] / 2 - title.get_width() / 2, 40))
+        screen.blit(option1, (res[0] / 2 - option1.get_width() / 2, 120))
+
+        pygame.display.flip()
+
+    donutVelMult = (diff % len(diffs) + 1) * 0.525
     dodgedDonuts = 0
-    donutDelay = 0.2
+    donutDelay = 0.2 / float(diff + 1) * 1.75
     donutDelay_ = time.time() + donutDelay
     donuts = []
     player.reset()
@@ -273,9 +321,11 @@ while run:
         if keys[pygame.K_RIGHT] or keys[pygame.K_d]:
             player.vel += int(velInc * dt)
 
+
         player.vel = clamp(player.vel, -playerVel, playerVel)
+        
         player.x += player.vel * dt
-        print(dt)
+        #print(dt)
 
         if player.x > res[0] - 50:
             player.x = res[0] - 50
