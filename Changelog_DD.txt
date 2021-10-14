@@ -23,4 +23,8 @@ MM/DD/YYYY
 
 0.2.2: - 15:37 Armenia Time on 10/13/2021
 - FIXED donut rendering issues entirely!! This was done by creating a simple instance pooling system for the donuts.
-- BUG WITH DELTATIME: Seems to affect speed increase/decrease weirdly - low FPS = fast, high FPS = slow
+- (POSSIBLE) BUG WITH DELTATIME: Seems to affect speed increase/decrease weirdly - low FPS = fast, high FPS = slow
+
+0.2.3: -  on 10/14/2021
+- Finally changed the caption from "you're mom" to "Donut Dodger."
+- Cenetered the player sprite and added rotations!

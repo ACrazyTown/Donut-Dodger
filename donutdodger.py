@@ -9,6 +9,8 @@ from pygame import image
 
 from pygame.display import update
 
+gameVersion = "0.2.3"
+
 # PRE INIT STUFF
 debugMode = False
 
@@ -34,11 +36,12 @@ print(displayRefreshRate)
 pygame.init()
 res = (500, 500)
 screen = pygame.display.set_mode(res)
-pygame.display.set_caption("DONUT DOGER PYTHON (SWAG WEED EDITION)")
+pygame.display.set_caption(f"Donut Dodger.py {gameVersion}")
 run = True
 clock = pygame.time.Clock()
 donutSize = 35
 playerSize = 50
+playerHalfSize = playerSize / 2
 
 showFps = False
 
@@ -124,7 +127,7 @@ class Player:
         self.x = self.initVars[0]
         self.y = self.initVars[1]
         self.vel = self.initVars[2]
-player = Player(250, 450, 0)
+player = Player(250, 475, 0)
 
 ##EXTRA STUFF############################
 def updateFps():
@@ -147,13 +150,14 @@ def deltaTime():
 def playerCollision(donut):
     global player
     newDonutCollider = [donut.x + 5, donut.x + donutSize - 5, donut.y + 5, donut.y + donutSize - 5]
-    return player.x < newDonutCollider[1] and player.x + playerSize > newDonutCollider[0] and player.y < newDonutCollider[3] and player.y + playerSize > newDonutCollider[2]
+    return player.x - playerHalfSize < newDonutCollider[1] and player.x - playerHalfSize + playerSize > newDonutCollider[0] and player.y - playerHalfSize < newDonutCollider[3] and player.y - playerHalfSize + playerSize > newDonutCollider[2]
 ####################################
 
 
 #print(donuts)
 main = False
 over = False
+
 menu = True
 
 debug = False
@@ -288,6 +292,9 @@ while run:
     # POOLING
     pooled = False
 
+    #angle
+    ang = 0
+
     while main:
         clock.tick(fps_cap)
         deltaTime()
@@ -313,17 +320,25 @@ while run:
                 donutDelay_ = time.time() + donutDelay
                 Donut.spawn()
 
-        if player.vel != 0:
+        if int(player.vel) != 0:
             if player.vel > 0:
                 player.vel -= velInc / 4 * dt
             elif player.vel < 0:
                 player.vel += velInc / 4 * dt
+        else:
+            player.vel = 0
+
+        ang += 0 - ang * dt * 5
 
         if keys[pygame.K_LEFT] or keys[pygame.K_a]:
             player.vel -= int(velInc * dt)
+            ang += 25 * dt
+
         if keys[pygame.K_RIGHT] or keys[pygame.K_d]:
             player.vel += int(velInc * dt)
+            ang -= 25 * dt
 
+        ang = clamp(ang, -50, 50)
 
         player.vel = clamp(player.vel, -playerVel, playerVel)
         
@@ -339,7 +354,8 @@ while run:
 
         #pygame.draw.rect(screen, (255, 0, 0), pygame.Rect(player.x, player.y, 25, 25))
         Donut.update()
-        screen.blit(iDing, (player.x, player.y))
+        sPlayer = pygame.transform.rotate(iDing, ang)
+        screen.blit(sPlayer, (player.x - playerHalfSize, player.y - playerHalfSize))
         for i in donuts:
             screen.blit(iDonut, (i.x, i.y))
         pygame.display.flip()
