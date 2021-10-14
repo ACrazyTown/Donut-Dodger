@@ -282,6 +282,8 @@ while run:
     donuts = []
     player.reset()
     
+    explosionTime = False
+
     # POOLING
     pooled = False
 
