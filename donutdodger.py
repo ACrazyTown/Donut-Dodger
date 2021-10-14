@@ -10,7 +10,7 @@ from pygame import image
 
 from pygame.display import update
 
-gameVersion = "0.3"
+#gameVersion = "0.3"
 
 try:
     open('info.txt')
