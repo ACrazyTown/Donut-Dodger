@@ -13,37 +13,35 @@ from pygame.display import update
 #gameVersion = "0.3"
 
 try:
-    open('info.txt')
     gi = {}
-    gameInfo = open('info.txt', 'r')
-
-    gii = gameInfo.readlines()
-    for line in gii:
-        line = line.rstrip('\n')
-        t, v = line.split(':')
-        gi[t] = v
+    with open("info.txt", "r") as f:
+        for line in f:
+            line = line.rstrip('\n')
+            name, value = line.split(":")
+            gi[name] = value
 
     print(f"GAME INFO LOADED: {gi}")
 except FileNotFoundError:
     print("INFO FILE NOT FOUND! GAME INFO COULD NOT BE LOADED.")
 
-
-hiScores = [0, 0, 0]
+hiScores = [0, 0, 0, 0]
 
 try:
-  h = open('data/hi.txt', "r")
-  hh = h.readlines()
   i = 0
-  for line in hh:
-      line = line.strip('\n')
-      mode, score = line.split(':')
-      hiScores[i] = score
-      i += 1
+  with open("data/hi.txt", "r") as f:
+      for line in f:
+          line = line.strip('\n')
+          diff, score = line.split(":")
+          hiScores[i] = score
+          i += 1
+
   print(f"HIGH SCORES LOADED: {hiScores}")
 except FileNotFoundError:
-    hs = open('data/hi.txt', "w")
-    hs.write("e:0\nn:0\nh:0")
-    hs.close()
+    #hs = open('data/hi.txt', "w")
+    #hs.write("e:0\nn:0\nh:0\nw:0")
+    #hs.close()
+    with open("data/hi.txt", "w") as f:
+        f.write("e:0\nn:0\nh:0\nw:0")
     print("NEW HIGH SCORE FILE MADE.")
 
 # PRE INIT STUFF
@@ -236,7 +234,8 @@ while run:
     easy = font.render(f"Easy {hiScores[0]}", True, (128, 128, 128))
     norm = font.render(f"Norm {hiScores[1]}", True, (128, 128, 128))
     hard = font.render(f"Hard {hiScores[2]}", True, (128, 128, 128))
-    scores = [easy, norm, hard]
+    wtf = font.render(f"WTF {hiScores[3]}", True, (128, 128, 128))
+    scores = [easy, norm, hard, wtf]
     scoreSpacing = 25
 
     while menu:
@@ -298,7 +297,7 @@ while run:
 
         if debugMode:
             # res[0] / 2 - sussy.get_width() / 2
-            screen.blit(sussy, (coolX, res[1] - 75))
+            screen.blit(sussy, (coolX, res[1] - 175))
         pygame.display.flip()
 
     # DEBUG MODE OPTIONS
