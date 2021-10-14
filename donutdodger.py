@@ -345,10 +345,10 @@ while run:
         player.x += player.vel * dt
         #print(dt)
 
-        if player.x > res[0] - 50:
+        if player.x - playerHalfSize > res[0] - 50:
             player.x = res[0] - 50
             player.vel = 0
-        elif player.x < 0:
+        elif player.x - playerHalfSize < 0:
             player.x = 0
             player.vel = 0
 
