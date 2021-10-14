@@ -11,6 +11,17 @@ from pygame.display import update
 
 gameVersion = "0.2.3"
 
+gi = {}
+gameInfo = open('info.txt', 'r')
+
+gii = gameInfo.readlines()
+for line in gii:
+    line = line.rstrip('\n')
+    t, v = line.split(':')
+    gi[t] = v
+
+print(f"GAME INFO LOADED: {gi}")
+
 # PRE INIT STUFF
 debugMode = False
 
@@ -36,7 +47,7 @@ print(displayRefreshRate)
 pygame.init()
 res = (500, 500)
 screen = pygame.display.set_mode(res)
-pygame.display.set_caption(f"Donut Dodger.py {gameVersion}")
+pygame.display.set_caption(f"{gi['caption']} {gi['version']}")
 run = True
 clock = pygame.time.Clock()
 donutSize = 35
@@ -239,7 +250,7 @@ while run:
         text = texts[poopIndex % poopyLength]
         bruh = font.render(text, True, (0, 0, 0))
         bruh2 = font.render(texts2, True, (0, 0, 0))
-        title = bigFont.render("DONUT DODGER PY", True, (0, 0, 0))
+        title = bigFont.render(gi['title'], True, (0, 0, 0))
         sussy = font.render("debug mode!!! hecker!!!!", True, (0, 0, 0))
         screen.blit(title, (res[0] / 2 - title.get_width() / 2, 40))
         screen.blit(bruh, (res[0] / 2 - bruh.get_width() / 2, 200 - 2 *math.fabs(math.sin(time.time() / 0.352945328) * 10)))
@@ -345,11 +356,11 @@ while run:
         player.x += player.vel * dt
         #print(dt)
 
-        if player.x - playerHalfSize > res[0] - 50:
-            player.x = res[0] - 50
+        if player.x + playerHalfSize >= res[0]:
+            player.x = res[0] - playerHalfSize
             player.vel = 0
-        elif player.x - playerHalfSize < 0:
-            player.x = 0
+        elif player.x - playerHalfSize <= 0:
+            player.x = playerHalfSize
             player.vel = 0
 
         #pygame.draw.rect(screen, (255, 0, 0), pygame.Rect(player.x, player.y, 25, 25))

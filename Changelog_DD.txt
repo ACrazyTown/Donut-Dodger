@@ -32,3 +32,5 @@ MM/DD/YYYY
 
 0.2.4:
 - Fixed weird collision with edges.
+- Fixed weird collision with edges.
+- Added info.txt.
